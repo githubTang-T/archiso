@@ -46,12 +46,15 @@ zd1211-firmware
 #===================================
 # stuff added for flujos
 #===================================
+sudo
 mpd
 mpc
 gmpc
 ncmpc
 ario
 gnome
+gnome-extra
+gstreamer0.10-plugins
 gdm
 xorg
 ardour
