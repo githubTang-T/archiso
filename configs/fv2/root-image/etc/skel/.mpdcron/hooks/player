@@ -1,0 +1,18 @@
+echo '<<<player hook>>>'
+
+if [[ $MPD_SONG_URI == 'hora.ogg' ]] && [[ ! -d /tmp/hora ]] ; then
+    echo "<<<play $MPD_SONG_URI>>>"
+    mkdir /tmp/hora
+    POS=$(mpc status -f %position% | sed -n 1p)
+    spxcat ~/.mpd/music/hora.ogg  
+    mpc play $POS
+    # if MPDLastuPDATE> something && mpc update hora.ogg 
+fi
+if [[ $MPD_SONG_URI != 'hora.ogg' ]] && [[ -d '/tmp/hora' ]] ; then
+    echo "<<<remove /tmp/hora>>>"
+    rmdir /tmp/hora
+fi
+
+if [[ $(mpc playlist|wc -l) < 2 ]] ; then
+    mpd_random_add 1 
+fi
