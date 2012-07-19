@@ -52,7 +52,9 @@ mpd
 mpc
 ncmpc
 ario
-xorg
+xorg-server
+xf86-video-vesa
+#xorg-drivers
 screen
 vim
 nano
