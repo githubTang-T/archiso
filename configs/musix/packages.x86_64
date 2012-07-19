@@ -47,11 +47,12 @@ zd1211-firmware
 ###
 gnome
 gdm
+gnome-packagekit
 mpd
 mpc
 ncmpc
 ario
-xorg-server
+xorg
 screen
 vim
 nano
