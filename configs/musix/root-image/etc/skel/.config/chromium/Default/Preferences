@@ -1,0 +1,239 @@
+{
+   "backup": {
+      "_signature": "dYEZdtVkfhi/bLHvrvUGUFDtXvbbidGK2GecZP34D5k=",
+      "_version": 3,
+      "browser": {
+         "show_home_button": false
+      },
+      "extensions": {
+         "ids": [ "ahfgeienlihckogmohjhadlkjgocpleb" ]
+      },
+      "homepage": "",
+      "homepage_is_newtabpage": true,
+      "session": {
+         "restore_on_startup": 5
+      }
+   },
+   "bookmark_bar": {
+      "show_on_all_tabs": false
+   },
+   "browser": {
+      "clear_lso_data_enabled": true,
+      "custom_chrome_frame": true,
+      "last_known_google_url": "http://www.google.com.mx/",
+      "last_prompted_google_url": "http://www.google.com.mx/",
+      "show_home_button": false,
+      "window_placement": {
+         "bottom": 721,
+         "left": 0,
+         "maximized": true,
+         "right": 1004,
+         "top": 0,
+         "work_area_bottom": 768,
+         "work_area_left": 0,
+         "work_area_right": 1024,
+         "work_area_top": 27
+      }
+   },
+   "cloud_print": {
+      "email": ""
+   },
+   "countryid_at_install": 19800,
+   "default_apps_install_state": 1,
+   "default_search_provider": {
+      "enabled": true,
+      "encodings": "UTF-8",
+      "icon_url": "http://www.google.com/favicon.ico",
+      "id": "2",
+      "instant_url": "{google:baseURL}webhp?{google:RLZ}sourceid=chrome-instant&ie={inputEncoding}{google:instantEnabledParameter}{searchTerms}",
+      "keyword": "google.com.mx",
+      "name": "Google",
+      "prepopulate_id": "1",
+      "search_url": "{google:baseURL}search?{google:RLZ}{google:acceptedSuggestion}{google:originalQueryForSuggestion}{google:searchFieldtrialParameter}sourceid=chrome&ie={inputEncoding}&q={searchTerms}",
+      "suggest_url": "{google:baseSuggestURL}search?{google:searchFieldtrialParameter}client=chrome&hl={language}&q={searchTerms}"
+   },
+   "download": {
+      "default_directory": "/home/radio/Descargas",
+      "directory_upgrade": true
+   },
+   "extensions": {
+      "autoupdate": {
+         "next_check": "12987080467838674"
+      },
+      "chrome_url_overrides": {
+         "bookmarks": [ "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/main.html" ]
+      },
+      "settings": {
+         "ahfgeienlihckogmohjhadlkjgocpleb": {
+            "app_launcher_ordinal": "n",
+            "page_ordinal": "n"
+         }
+      }
+   },
+   "homepage": "",
+   "homepage_is_newtabpage": true,
+   "net": {
+      "http_server_properties": {
+         "chrome.google.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         },
+         "fls.doubleclick.net:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            }, {
+               "id": 5,
+               "value": 32
+            }, {
+               "id": 6,
+               "value": 0
+            } ],
+            "supports_spdy": true
+         },
+         "fonts.googleapis.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            }, {
+               "id": 5,
+               "value": 32
+            }, {
+               "id": 6,
+               "value": 0
+            } ],
+            "supports_spdy": true
+         },
+         "googleads.g.doubleclick.net:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            }, {
+               "id": 5,
+               "value": 32
+            }, {
+               "id": 6,
+               "value": 0
+            } ],
+            "supports_spdy": true
+         },
+         "ssl.google-analytics.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            }, {
+               "id": 5,
+               "value": 32
+            }, {
+               "id": 6,
+               "value": 0
+            } ],
+            "supports_spdy": true
+         },
+         "ssl.gstatic.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            }, {
+               "id": 5,
+               "value": 33
+            }, {
+               "id": 6,
+               "value": 0
+            } ],
+            "supports_spdy": true
+         },
+         "themes.googleusercontent.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            }, {
+               "id": 5,
+               "value": 2
+            }, {
+               "id": 6,
+               "value": 8
+            } ],
+            "supports_spdy": true
+         },
+         "www.google.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         },
+         "www.googleadservices.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            }, {
+               "id": 5,
+               "value": 32
+            }, {
+               "id": 6,
+               "value": 0
+            } ],
+            "supports_spdy": true
+         }
+      }
+   },
+   "ntp": {
+      "app_page_names": [ "Google Apps" ],
+      "promo_resource_cache_update": "1342587752.34265"
+   },
+   "plugins": {
+      "enabled_internal_pdf3": true,
+      "enabled_nacl": true,
+      "last_internal_directory": "/usr/lib/chromium",
+      "plugins_list": [ {
+         "enabled": true,
+         "name": "Remoting Viewer",
+         "path": "internal-remoting-viewer",
+         "version": ""
+      }, {
+         "enabled": true,
+         "name": "Remoting Viewer"
+      }, {
+         "enabled": true,
+         "name": "Native Client",
+         "path": "/usr/lib/chromium/libppGoogleNaClPluginChrome.so",
+         "version": ""
+      }, {
+         "enabled": true,
+         "name": "Native Client"
+      }, {
+         "enabled": true,
+         "name": "Shockwave Flash",
+         "path": "/usr/lib/mozilla/plugins/libflashplayer.so",
+         "version": "11.2 r202"
+      }, {
+         "enabled": true,
+         "name": "Flash"
+      }, {
+         "enabled": true,
+         "name": "Gnome Shell Integration",
+         "path": "/usr/lib/mozilla/plugins/libgnome-shell-browser-plugin.so",
+         "version": ""
+      }, {
+         "enabled": true,
+         "name": "Gnome Shell Integration"
+      } ]
+   },
+   "profile": {
+      "avatar_index": 0,
+      "content_settings": {
+         "pref_version": 1
+      },
+      "created_by_version": "20.0.1132.57",
+      "exited_cleanly": false,
+      "local_profile_id": 1113092,
+      "name": "Primer usuario"
+   },
+   "session": {
+      "restore_on_startup_migrated": true
+   }
+}
