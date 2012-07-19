@@ -45,8 +45,8 @@ wireless_tools
 wpa_actiond
 zd1211-firmware
 ###
-gnome
-gdm
+e17-svn
+e17-libs-svn
 gnome-packagekit
 mpd
 mpc
