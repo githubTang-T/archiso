@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Exec=/usr/bin/mpdcron
-Hidden=false
-X-GNOME-Autostart-enabled=true
-Name[es_MX]=mpdcron
-Name=mpdcron
-Comment[es_MX]=automator for mpd
-Comment=automator for mpd
