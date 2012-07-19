@@ -14,15 +14,23 @@ cmd_args=""
 
 script_path=$(readlink -f ${0%/*})
 
+setup_workdir() {
+    cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+    mkdir -p "${work_dir}"
+    pacman_conf="${work_dir}/pacman.conf"
+    sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" \
+        "${script_path}/pacman.conf" > "${pacman_conf}"
+}
+
 # Base installation (root-image)
 make_basefs() {
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" init
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" -p "memtest86+ mkinitcpio-nfs-utils nbd curl" install
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "memtest86+ mkinitcpio-nfs-utils nbd curl" install
 }
 
 # Additional packages (root-image)
 make_packages() {
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" -p "$(grep -v ^# ${script_path}/packages.${arch})" install
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -v ^# ${script_path}/packages.${arch})" install
 }
 
 # Copy mkinitcpio archiso hooks (root-image)
@@ -47,7 +55,7 @@ make_boot() {
         local _src=${work_dir}/root-image
         local _dst_boot=${work_dir}/iso/${install_dir}/boot
         mkdir -p ${_dst_boot}/${arch}
-        mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" \
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' \
             run
         mv ${_src}/boot/archiso.img ${_dst_boot}/${arch}/archiso.img
@@ -112,8 +120,8 @@ make_syslinux() {
         cp ${_src_syslinux}/*.0 ${_dst_syslinux}
         cp ${_src_syslinux}/memdisk ${_dst_syslinux}
         mkdir -p ${_dst_syslinux}/hdt
-        wget -O - http://pciids.sourceforge.net/v2.2/pci.ids | gzip -9 > ${_dst_syslinux}/hdt/pciids.gz
-        cat ${work_dir}/root-image/lib/modules/*-ARCH/modules.alias | gzip -9 > ${_dst_syslinux}/hdt/modalias.gz
+        cat ${work_dir}/root-image/usr/share/hwdata/pci.ids | gzip -9 > ${_dst_syslinux}/hdt/pciids.gz
+        cat ${work_dir}/root-image/usr/lib/modules/*-ARCH/modules.alias | gzip -9 > ${_dst_syslinux}/hdt/modalias.gz
         : > ${work_dir}/build.${FUNCNAME}
     fi
 }
@@ -136,23 +144,24 @@ make_customize_root_image() {
         chmod 750 ${work_dir}/root-image/etc/sudoers.d
         chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
         mkdir -p ${work_dir}/root-image/etc/pacman.d
-        wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist http://www.archlinux.org/mirrorlist/all/
+        wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
         sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
+        patch ${work_dir}/root-image/usr/bin/pacman-key < ${script_path}/pacman-key-4.0.3_unattended-keyring-init.patch
         sed -i 's/#\(en_US\.UTF-8\)/\1/' ${work_dir}/root-image/etc/locale.gen
-        mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" \
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'locale-gen' \
             run
-        mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" \
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'useradd -m -p "" -g users -G "audio,disk,optical,wheel" arch' \
             run
         : > ${work_dir}/build.${FUNCNAME}
     fi
 }
 
-# Split out /lib/modules from root-image (makes more "dual-iso" friendly)
-make_lib_modules() {
+# Split out /usr/lib/modules from root-image (makes more "dual-iso" friendly)
+make_usr_lib_modules() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
-        mv ${work_dir}/root-image/lib/modules ${work_dir}/lib-modules
+        mv ${work_dir}/root-image/usr/lib/modules ${work_dir}/usr-lib-modules
         : > ${work_dir}/build.${FUNCNAME}
     fi
 }
@@ -168,28 +177,37 @@ make_usr_share() {
 # Make [core] repository, keep "any" pkgs in a separate fs (makes more "dual-iso" friendly)
 make_core_repo() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
-        local _url _urls _pkg_name _cached_pkg _dst _pkgs
+        local _url _urls _pkg_name _dst _pkgs _cache_dir
         mkdir -p ${work_dir}/repo-core-any
         mkdir -p ${work_dir}/repo-core-${arch}
         mkdir -p ${work_dir}/pacman.db/var/lib/pacman
-        pacman -Sy -r ${work_dir}/pacman.db
-        _pkgs=$(comm -2 -3 <(pacman -Sql -r ${work_dir}/pacman.db core | sort | sed 's@^@core/@') \
+        pacman --config "${pacman_conf}" -Sy -r ${work_dir}/pacman.db
+        _pkgs=$(comm -2 -3 <(pacman --config "${pacman_conf}" -Sql -r ${work_dir}/pacman.db core | sort | sed 's@^@core/@') \
                            <(grep -v ^# ${script_path}/core.exclude.${arch} | sort | sed 's@^@core/@'))
-        _urls=$(pacman -Sddp -r ${work_dir}/pacman.db ${_pkgs})
-        pacman -Swdd -r ${work_dir}/pacman.db --noprogressbar --noconfirm ${_pkgs}
+        _urls=$(pacman --config "${pacman_conf}" -Sddp -r ${work_dir}/pacman.db ${_pkgs})
+        pacman --config "${pacman_conf}" -Swdd -r ${work_dir}/pacman.db --noprogressbar --noconfirm ${_pkgs}
         for _url in ${_urls}; do
             _pkg_name=${_url##*/}
-            _cached_pkg=/var/cache/pacman/pkg/${_pkg_name}
             _dst=${work_dir}/repo-core-${arch}/${_pkg_name}
-            cp ${_cached_pkg} ${_dst}
+            for _cache_dir in ${cache_dirs[@]}; do
+                if [[ -e "${_cache_dir}/${_pkg_name}" ]]; then
+                    cp "${_cache_dir}/${_pkg_name}" ${_dst}
+                fi
+            done
+            # download the package signature
+            curl -sC - -f "${_url}.sig" > "${_dst}.sig"
             repo-add -q ${work_dir}/repo-core-${arch}/core.db.tar.gz ${_dst}
+            # remove the signature file again as it is now included in the db file
+            rm -f "${_dst}.sig"
             if [[ ${_pkg_name} == *any.pkg.tar* ]]; then
                 mv ${_dst} ${work_dir}/repo-core-any/${_pkg_name}
                 ln -sf ../any/${_pkg_name} ${_dst}
             fi
         done
+        # Remove old copy of db file
+        rm -f ${work_dir}/repo-core-${arch}/core.db.tar.gz.old
         mkdir -p ${work_dir}/iso/${install_dir}
-        pacman -Sp -r ${work_dir}/pacman.db --print-format "%r/%n-%v" ${_pkgs} | sort > ${work_dir}/iso/${install_dir}/pkglist.repo-core.${arch}.txt
+        pacman --config "${pacman_conf}" -Sp -r ${work_dir}/pacman.db --print-format "%r/%n-%v" ${_pkgs} | sort > ${work_dir}/iso/${install_dir}/pkglist.repo-core.${arch}.txt
         : > ${work_dir}/build.${FUNCNAME}
     fi
 }
@@ -206,16 +224,16 @@ make_aitab() {
 
 # Build all filesystem images specified in aitab (.fs .fs.sfs .sfs)
 make_prepare() {
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" pkglist
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" prepare
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" pkglist
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" prepare
 }
 
 # Build ISO
 # args: $1 (core | netinstall)
 make_iso() {
     local _iso_type=${1}
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" checksum
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${iso_name}-${iso_version}-${_iso_type}-${arch}.iso"
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" checksum
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${iso_name}-${iso_version}-${_iso_type}-${arch}.iso"
 }
 
 # Build dual-iso images from ${work_dir}/i686/iso and ${work_dir}/x86_64/iso
@@ -305,7 +323,7 @@ make_common_single() {
     make_syslinux
     make_isolinux
     make_customize_root_image
-    make_lib_modules
+    make_usr_lib_modules
     make_usr_share
     make_aitab $1
     make_prepare $1
@@ -419,6 +437,8 @@ fi
 if [[ ${command_mode} == "single" ]]; then
     work_dir=${work_dir}/${arch}
 fi
+
+setup_workdir
 
 case "${command_name}" in
     build)

@@ -1,7 +1,9 @@
 #!/bin/bash
 
 build() {
-    SCRIPT="archiso_shutdown"
+    add_binary cp
+
+    add_runscript
 
     add_file /usr/lib/initcpio/archiso_shutdown /shutdown
 }
