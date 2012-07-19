@@ -44,15 +44,18 @@ vpnc
 wireless_tools
 wpa_actiond
 zd1211-firmware
-###
+### e17
 e17-svn
 e17-libs-svn
+#connman
+networkmanager
 gnome-packagekit
 mpd
 mpc
 ncmpc
 ario
-xorg
+xorg-server
+xf86-video-vesa
 screen
 vim
 nano
