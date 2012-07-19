@@ -1,0 +1,12 @@
+#!/bin/bash 
+echo '<<<replaygain>>>'
+
+if [[ $1 == *.ogg ]] || [[ $1 == *.oga ]] ; then
+    echo "[ogg] vorbisgain $1"
+    vorbisgain -q $1
+fi
+    
+if [[ $1 == *.mp3 ]] ; then
+    echo "[mp3] mp3gain $1"
+    mp3gain -r -k -q $1
+fi

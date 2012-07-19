@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# /etc/rc.local: Local multi-user startup script.
+#
+su radio -c mpd
+su radio -c jackstart
+alsactl restore

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+LOGFILE="$HOME/.jackd/jack.log"
+DRIVER="$1"
+IP=`ifconfig eth0 | grep 'inet '| grep -v '127.0.0.1' | awk '{ print $2}'`
+# net driver params
+# '-d net -t -a 192.168.3.2 -c 64 -C 0'
+# alsa params
+# '-d alsa -r 44100 -p 1024 -z shaped -s -S -P'
+
+if [[ ! $(pgrep jackd) > /dev/null ]] ; then
+    jackd -p 24 -R $DRIVER &> $LOGFILE &
+    sleep .3
+    jack_load netmanager -i "-a $IP -c 64" &> $LOGFILE
+fi
+
+#!/bin/bash
+jack_cmd='jackd -p24 -R -d alsa -r 44100 -p 1024 -z shaped -s -S -P'
+#net_cmd='jack_load netmanager -i "-a 192.168.3.2 -c 64"'
+LOGFILE="$HOME/.jackd/jackd.log"
+
+#net_cmd='jack_netsource -H 192.168.3.1'
+
+if [[ ! $(pgrep jackd) > /dev/null ]] ; then
+    $jack_cmd &> $LOGFILE &
+    sleep 2 
+    #$net_cmd &> $LOGFILE 
+    jack_load netmanager -i "-a 192.168.3.2 -c 64" &> $LOGFILE
+fi
