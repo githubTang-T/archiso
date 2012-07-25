@@ -3,10 +3,7 @@ all:
 install: install-program install-hooks install-examples install-doc
 
 install-program:
-	# install to sbin since script only usable by root
 	install -D -m 755 mkarchiso $(DESTDIR)/usr/sbin/mkarchiso
-	# testiso can be used by anyone
-	install -D -m 755 testiso $(DESTDIR)/usr/bin/testiso
 
 install-hooks:
 	# hooks/install are needed by mkinitcpio
@@ -29,7 +26,6 @@ install-hooks:
 	install -D -m 644 install/archiso_kms $(DESTDIR)/usr/lib/initcpio/install/archiso_kms
 
 install-examples:
-	# install examples
 	install -d -m 755 $(DESTDIR)/usr/share/archiso/
 	cp -r ../configs $(DESTDIR)/usr/share/archiso/
 
@@ -39,7 +35,6 @@ install-doc:
 	
 uninstall:
 	rm -f $(DESTDIR)/usr/sbin/mkarchiso
-	rm -f $(DESTDIR)/usr/bin/testiso
 	rm -f $(DESTDIR)/usr/lib/initcpio/hooks/archiso
 	rm -f $(DESTDIR)/usr/lib/initcpio/install/archiso
 	rm -f $(DESTDIR)/usr/lib/initcpio/archiso_shutdown
