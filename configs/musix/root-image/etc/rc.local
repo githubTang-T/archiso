@@ -2,6 +2,9 @@
 #
 # /etc/rc.local: Local multi-user startup script.
 #
-su radio -c mpd
-su radio -c jackstart
+# set passwd
+sed -i 's/^arch:[^:]*/arch:$6$O3ydLHFN$15KdwteKFNRgoe06rieoiiCl9cY\/JWjLSBeoExo2ef3YKFMcXGEXuRBNQJAO.ax3QbuKbidnXED0HqcZ4FetG\./' /etc/shadow
+
+#su arch -c mpd
+su arch -c jackstart
 alsactl restore
