@@ -2,14 +2,14 @@
 
 set -e -u
 
-iso_name=archlinux
+iso_name=musix0
 iso_label="ARCH_$(date +%Y%m)"
 iso_version=$(date +%Y.%m.%d)
 install_dir=arch
 arch=$(uname -m)
 work_dir=work
 out_dir=out
-verbose=""
+verbose="-v"
 cmd_args=""
 
 script_path=$(readlink -f ${0%/*})
