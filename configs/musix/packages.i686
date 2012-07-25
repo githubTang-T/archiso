@@ -15,6 +15,7 @@ elinks
 gnu-netcat
 gptfdisk
 grub-bios
+grub-efi-x86_64
 haveged
 hdparm
 ipw2100-fw
