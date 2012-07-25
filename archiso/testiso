@@ -22,5 +22,9 @@ case "${2}" in
    *) IF="scsi"; MEDIA="cdrom";;
 esac
 
-echo qemu-system-x86_64 -m 256 -drive file=${1},if=${IF},media=${MEDIA},boot=on
-qemu-system-x86_64 -m 256 -drive file=${1},if=${IF},media=${MEDIA},boot=on
+echo qemu-system-x86_64 -m 512 -drive \
+	file=${1},if=${IF},media=${MEDIA},boot=on \
+	-redir tcp:2222::22 -soundhw all
+qemu-system-x86_64 -m 512 -drive \
+	file=${1},if=${IF},media=${MEDIA},boot=on \
+	-redir tcp:2222::22 -soundhw all
